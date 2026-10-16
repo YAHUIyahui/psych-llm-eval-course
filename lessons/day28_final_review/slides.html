@@ -1,0 +1,143 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Day 28 查漏补缺与提交</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Noto+Sans+SC:wght@400;600&family=Noto+Serif+SC:wght@700&display=swap"><style>
+/* Layout: a lab-notebook page per slide, graph-paper ground, running header and footer. */
+:root{
+  --paper:#fbf7f0; --ink:#2b2219; --muted:#76685a; --rule:#e7ddcf; --grid:rgba(120,95,60,.06);
+  --accent:#a65d0c; --teal:#2b5a5e; --tint:#f3eadb; --warn:#9b3d2e; --warntint:#f6e2dc; --codebg:#f2ebe0;
+  --display:"Noto Serif SC","Songti SC","STSong",Georgia,serif;
+  --body:"Noto Sans SC","PingFang SC","Microsoft YaHei",system-ui,sans-serif;
+  --mono:"JetBrains Mono","SFMono-Regular",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#1d1915; --ink:#eee5d8; --muted:#a9998a; --rule:#3b332b; --grid:rgba(230,200,160,.05);
+  --accent:#e0a253; --teal:#86b9bb; --tint:#2a241e; --warn:#e48b78; --warntint:#33221d; --codebg:#26211b; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#1d1915; --ink:#eee5d8; --muted:#a9998a; --rule:#3b332b; --grid:rgba(230,200,160,.05);
+  --accent:#e0a253; --teal:#86b9bb; --tint:#2a241e; --warn:#e48b78; --warntint:#33221d; --codebg:#26211b; color-scheme:dark}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);line-height:1.65;
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:24px 24px}
+.bar{position:fixed;top:0;left:0;right:0;height:3px;background:var(--rule);z-index:5}
+.bar i{display:block;height:100%;width:0;background:var(--accent);transition:width .2s}
+.top{display:flex;gap:12px;align-items:center;justify-content:space-between;padding:12px 16px 0;font-size:13px;color:var(--muted)}
+.top a{color:var(--muted)}
+.top button{font:inherit;font-size:13px;color:var(--ink);background:transparent;border:1px solid var(--rule);border-radius:6px;padding:4px 10px;cursor:pointer}
+.top button:focus-visible,.navbtn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.deck{display:flex;flex-direction:column;gap:24px;padding:16px;align-items:center}
+.slide{width:100%;max-width:1000px;background:var(--paper);border:1px solid var(--rule);border-radius:4px;
+  padding:28px 28px 22px 44px;position:relative;display:flex;flex-direction:column;gap:14px;min-width:0}
+.slide::before{content:"";position:absolute;left:28px;top:0;bottom:0;width:1px;background:var(--accent);opacity:.35}
+.run{display:flex;justify-content:space-between;gap:12px;font-size:.78em;color:var(--muted);letter-spacing:.04em}
+.run .day,.foot .pg,.pos{font-family:var(--mono)}
+h1,h2{font-family:var(--display);font-weight:700;text-wrap:balance;margin:0;line-height:1.3}
+h1{font-size:2.1em}
+h2{font-size:1.5em}
+.sub{color:var(--muted);font-size:1.05em;margin:0}
+.body{display:flex;flex-direction:column;gap:12px;flex:1;min-width:0}
+p{margin:0}
+.lead{font-size:1.18em;max-width:40em}
+ul.points,ol.steps{margin:0;padding-left:1.3em;display:flex;flex-direction:column;gap:6px}
+ul.points li::marker{color:var(--accent)}
+ol.steps li::marker{color:var(--accent);font-family:var(--mono);font-weight:600}
+code{font-family:var(--mono);font-size:.9em;background:var(--codebg);padding:1px 5px;border-radius:3px}
+strong{color:var(--accent);font-weight:600}
+.formula{border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);padding:10px 4px;display:flex;flex-wrap:wrap;gap:6px 18px;align-items:baseline}
+.fexpr{font-family:var(--mono);font-size:1.12em;color:var(--teal);font-weight:600;overflow-wrap:anywhere}
+.fnote{color:var(--muted);font-size:.9em}
+.note{background:var(--tint);padding:10px 14px;border-radius:4px;display:flex;gap:12px;align-items:baseline}
+.note .tag{font-size:.75em;letter-spacing:.08em;color:var(--teal);font-weight:700;white-space:nowrap}
+.note.warn{background:var(--warntint)}
+.note.warn .tag{color:var(--warn)}
+pre.code{background:var(--codebg);padding:12px 14px;border-radius:4px;overflow-x:auto;margin:0;font-size:.82em;line-height:1.5}
+pre.code code{background:none;padding:0}
+.tablewrap{overflow-x:auto}
+table.t{border-collapse:collapse;font-size:.9em;font-variant-numeric:tabular-nums;min-width:60%}
+table.t th{text-align:left;font-weight:600;border-bottom:1.5px solid var(--ink);padding:5px 12px 5px 0}
+table.t td{border-bottom:1px solid var(--rule);padding:5px 12px 5px 0;vertical-align:top}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.cols>div{min-width:0;display:flex;flex-direction:column;gap:10px}
+figure.plate{margin:0;background:#fdfaf5;border:1px solid var(--rule);border-radius:4px;padding:8px;max-width:min(100%,760px);align-self:flex-start}
+figure.plate img{display:block;width:100%;height:auto}
+figure.plate figcaption{color:#76685a;font-size:.8em;padding-top:4px}
+.qa{border-left:2px solid var(--teal);padding-left:12px;display:flex;flex-direction:column;gap:4px}
+.qa .q{font-weight:600}
+.qa .a{color:var(--muted)}
+.foot{display:flex;justify-content:space-between;font-size:.75em;color:var(--muted)}
+.title-slide h1{font-size:2.6em}
+.title-slide .kicker{color:var(--accent);font-size:.95em;letter-spacing:.06em}
+.ctrl{display:flex;gap:8px;align-items:center}
+.navbtn{display:none;min-width:34px}
+.pos{display:none;font-size:12px;color:var(--muted);min-width:44px;text-align:center}
+/* presentation mode: one slide at a time, scaled to the viewport */
+body.present .deck{height:calc(100% - 48px);justify-content:center;padding:8px 16px 16px}
+body.present .slide{display:none;width:var(--sw);max-width:none;aspect-ratio:16/9;font-size:calc(var(--sw) / 52);overflow:auto}
+body.present .slide.on{display:flex}
+body.present figure.plate img{max-height:calc(var(--sw) * 0.21);width:auto;max-width:100%}
+body.present .formula{padding:6px 4px}
+body.present .navbtn,body.present .pos{display:inline-block}
+@media (max-width:760px){.cols{grid-template-columns:1fr}.slide{padding:22px 18px 18px 30px}.slide::before{left:16px}h1{font-size:1.7em}.title-slide h1{font-size:2em}}
+@media (prefers-reduced-motion:reduce){.bar i{transition:none}}
+@media print{body{background:none}.top,.bar{display:none}.deck{padding:0;gap:0}.slide{display:flex!important;page-break-after:always;border:none;aspect-ratio:auto;width:100%!important;font-size:14px!important}}
+</style></head>
+<body><div class="bar"><i></i></div>
+<div class="top"><a href="../../index.html">课程首页</a><div class="ctrl"><button class="navbtn" id="prev" type="button" aria-label="上一页">‹</button><span class="pos" id="pos"></span><button class="navbtn" id="next" type="button" aria-label="下一页">›</button><button id="mode" type="button">逐页放映</button></div></div>
+<main class="deck"><section class="slide title-slide" aria-label="封面">
+<div class="run"><span class="day">Day 28</span><span>复习与习题</span></div>
+<div class="body"><p class="kicker">心理大模型评测与 Agent · 第 28 天</p><h1>查漏补缺与提交</h1>
+<p class="sub">今天结束时你应该能够:</p><ul class="points"><li>用自动检查确认期末作业的交付物齐全</li><li>按评分标准给自己的期末作业打分</li><li>完成结业小测</li><li>规划下一步：投递、研究或发表</li></ul></div>
+<div class="foot"><span>建议用时 3 到 4 小时</span><span class="pg">1 / 5</span></div></section><section class="slide" aria-label="提交清单">
+<div class="run"><span><span class="day">Day 28</span> · 查漏补缺与提交</span><span>复习与习题</span></div>
+<h2>提交清单</h2><div class="body"><ul class="points"><li>仓库：README、run_all.py、docs/(rubric、分析计划、协议、审计、复现规范）、results/。</li><li>报告：正文不超过 6 页，每个估计带区间。</li><li>汇报幻灯片：约 10 页。</li><li>简历条目和 2 分钟项目介绍录音。</li><li>习题集 1 到 3。</li></ul></div>
+<div class="foot"><span>心理大模型评测与 Agent</span><span class="pg">2 / 5</span></div></section><section class="slide" aria-label="按评分标准自评">
+<div class="run"><span><span class="day">Day 28</span> · 查漏补缺与提交</span><span>复习与习题</span></div>
+<h2>按评分标准自评</h2><div class="body"><p>打开 <code>COURSEWORK.md</code> 的评分表，逐项给自己打分，并写一句理由。分数最低的一项，就是下一周最值得改的地方。</p></div>
+<div class="foot"><span>心理大模型评测与 Agent</span><span class="pg">3 / 5</span></div></section><section class="slide" aria-label="下一步">
+<div class="run"><span><span class="day">Day 28</span> · 查漏补缺与提交</span><span>复习与习题</span></div>
+<h2>下一步</h2><div class="body"><div class="tablewrap"><table class="t"><thead><tr><th>方向</th><th>具体动作</th></tr></thead><tbody><tr><td>投递</td><td>用第 26 天的简历条目更新简历；优先投评测、数据与安全、用户建模类岗位；找内推</td></tr><tr><td>研究</td><td>与导师讨论把期末作业扩展成方法学研究；补伦理程序；增加评分者和中文题目</td></tr><tr><td>学习</td><td>第 15 到 18 天的模型与 Agent 内容可以继续深入，但先把评测方法用熟</td></tr></tbody></table></div></div>
+<div class="foot"><span>心理大模型评测与 Agent</span><span class="pg">4 / 5</span></div></section><section class="slide" aria-label="一句话总结这门课">
+<div class="run"><span><span class="day">Day 28</span> · 查漏补缺与提交</span><span>复习与习题</span></div>
+<h2>一句话总结这门课</h2><div class="body"><p class="lead">先检验测量工具，再相信结论。这句话对心理学研究成立，对大模型评测同样成立。</p></div>
+<div class="foot"><span>心理大模型评测与 Agent</span><span class="pg">5 / 5</span></div></section></main>
+<script>
+(function(){
+  const slides=[...document.querySelectorAll('.slide')];
+  const bar=document.querySelector('.bar i');
+  const btn=document.getElementById('mode');
+  const pos=document.getElementById('pos');
+  let i=0;
+  function fit(){
+    const w=Math.min(window.innerWidth-32,(window.innerHeight-70)*16/9);
+    document.documentElement.style.setProperty('--sw',Math.max(320,w)+'px');
+  }
+  function show(n){
+    i=Math.max(0,Math.min(slides.length-1,n));
+    slides.forEach((s,k)=>s.classList.toggle('on',k===i));
+    bar.style.width=((i+1)/slides.length*100)+'%';
+    pos.textContent=(i+1)+' / '+slides.length;
+    if(document.body.classList.contains('present')){history.replaceState(null,'','#'+(i+1));}
+  }
+  function setMode(present){
+    document.body.classList.toggle('present',present);
+    btn.textContent=present?'全部展开':'逐页放映';
+    try{localStorage.setItem('deckmode',present?'p':'s')}catch(e){}
+    fit();show(i);
+    if(!present&&slides[i])slides[i].scrollIntoView({block:'start'});
+  }
+  btn.addEventListener('click',()=>setMode(!document.body.classList.contains('present')));
+  document.getElementById('prev').addEventListener('click',()=>show(i-1));
+  document.getElementById('next').addEventListener('click',()=>show(i+1));
+  document.addEventListener('keydown',e=>{
+    if(!document.body.classList.contains('present'))return;
+    if(['ArrowRight','PageDown',' '].includes(e.key)){e.preventDefault();show(i+1)}
+    if(['ArrowLeft','PageUp'].includes(e.key)){e.preventDefault();show(i-1)}
+    if(e.key==='Home')show(0); if(e.key==='End')show(slides.length-1);
+  });
+  window.addEventListener('resize',fit);
+  const h=parseInt((location.hash||'').slice(1),10); if(h>0)i=h-1;
+  let pref=null; try{pref=localStorage.getItem('deckmode')}catch(e){}
+  const wide=window.innerWidth>760;
+  setMode(pref?pref==='p'&&wide:wide);
+})();
+</script></body></html>

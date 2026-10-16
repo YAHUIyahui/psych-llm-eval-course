@@ -1,0 +1,149 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Day 20 项目实战（二）：按计划分析并写结果</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Noto+Sans+SC:wght@400;600&family=Noto+Serif+SC:wght@700&display=swap"><style>
+/* Layout: a lab-notebook page per slide, graph-paper ground, running header and footer. */
+:root{
+  --paper:#fbf7f0; --ink:#2b2219; --muted:#76685a; --rule:#e7ddcf; --grid:rgba(120,95,60,.06);
+  --accent:#a65d0c; --teal:#2b5a5e; --tint:#f3eadb; --warn:#9b3d2e; --warntint:#f6e2dc; --codebg:#f2ebe0;
+  --display:"Noto Serif SC","Songti SC","STSong",Georgia,serif;
+  --body:"Noto Sans SC","PingFang SC","Microsoft YaHei",system-ui,sans-serif;
+  --mono:"JetBrains Mono","SFMono-Regular",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#1d1915; --ink:#eee5d8; --muted:#a9998a; --rule:#3b332b; --grid:rgba(230,200,160,.05);
+  --accent:#e0a253; --teal:#86b9bb; --tint:#2a241e; --warn:#e48b78; --warntint:#33221d; --codebg:#26211b; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#1d1915; --ink:#eee5d8; --muted:#a9998a; --rule:#3b332b; --grid:rgba(230,200,160,.05);
+  --accent:#e0a253; --teal:#86b9bb; --tint:#2a241e; --warn:#e48b78; --warntint:#33221d; --codebg:#26211b; color-scheme:dark}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);line-height:1.65;
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:24px 24px}
+.bar{position:fixed;top:0;left:0;right:0;height:3px;background:var(--rule);z-index:5}
+.bar i{display:block;height:100%;width:0;background:var(--accent);transition:width .2s}
+.top{display:flex;gap:12px;align-items:center;justify-content:space-between;padding:12px 16px 0;font-size:13px;color:var(--muted)}
+.top a{color:var(--muted)}
+.top button{font:inherit;font-size:13px;color:var(--ink);background:transparent;border:1px solid var(--rule);border-radius:6px;padding:4px 10px;cursor:pointer}
+.top button:focus-visible,.navbtn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.deck{display:flex;flex-direction:column;gap:24px;padding:16px;align-items:center}
+.slide{width:100%;max-width:1000px;background:var(--paper);border:1px solid var(--rule);border-radius:4px;
+  padding:28px 28px 22px 44px;position:relative;display:flex;flex-direction:column;gap:14px;min-width:0}
+.slide::before{content:"";position:absolute;left:28px;top:0;bottom:0;width:1px;background:var(--accent);opacity:.35}
+.run{display:flex;justify-content:space-between;gap:12px;font-size:.78em;color:var(--muted);letter-spacing:.04em}
+.run .day,.foot .pg,.pos{font-family:var(--mono)}
+h1,h2{font-family:var(--display);font-weight:700;text-wrap:balance;margin:0;line-height:1.3}
+h1{font-size:2.1em}
+h2{font-size:1.5em}
+.sub{color:var(--muted);font-size:1.05em;margin:0}
+.body{display:flex;flex-direction:column;gap:12px;flex:1;min-width:0}
+p{margin:0}
+.lead{font-size:1.18em;max-width:40em}
+ul.points,ol.steps{margin:0;padding-left:1.3em;display:flex;flex-direction:column;gap:6px}
+ul.points li::marker{color:var(--accent)}
+ol.steps li::marker{color:var(--accent);font-family:var(--mono);font-weight:600}
+code{font-family:var(--mono);font-size:.9em;background:var(--codebg);padding:1px 5px;border-radius:3px}
+strong{color:var(--accent);font-weight:600}
+.formula{border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);padding:10px 4px;display:flex;flex-wrap:wrap;gap:6px 18px;align-items:baseline}
+.fexpr{font-family:var(--mono);font-size:1.12em;color:var(--teal);font-weight:600;overflow-wrap:anywhere}
+.fnote{color:var(--muted);font-size:.9em}
+.note{background:var(--tint);padding:10px 14px;border-radius:4px;display:flex;gap:12px;align-items:baseline}
+.note .tag{font-size:.75em;letter-spacing:.08em;color:var(--teal);font-weight:700;white-space:nowrap}
+.note.warn{background:var(--warntint)}
+.note.warn .tag{color:var(--warn)}
+pre.code{background:var(--codebg);padding:12px 14px;border-radius:4px;overflow-x:auto;margin:0;font-size:.82em;line-height:1.5}
+pre.code code{background:none;padding:0}
+.tablewrap{overflow-x:auto}
+table.t{border-collapse:collapse;font-size:.9em;font-variant-numeric:tabular-nums;min-width:60%}
+table.t th{text-align:left;font-weight:600;border-bottom:1.5px solid var(--ink);padding:5px 12px 5px 0}
+table.t td{border-bottom:1px solid var(--rule);padding:5px 12px 5px 0;vertical-align:top}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.cols>div{min-width:0;display:flex;flex-direction:column;gap:10px}
+figure.plate{margin:0;background:#fdfaf5;border:1px solid var(--rule);border-radius:4px;padding:8px;max-width:min(100%,760px);align-self:flex-start}
+figure.plate img{display:block;width:100%;height:auto}
+figure.plate figcaption{color:#76685a;font-size:.8em;padding-top:4px}
+.qa{border-left:2px solid var(--teal);padding-left:12px;display:flex;flex-direction:column;gap:4px}
+.qa .q{font-weight:600}
+.qa .a{color:var(--muted)}
+.foot{display:flex;justify-content:space-between;font-size:.75em;color:var(--muted)}
+.title-slide h1{font-size:2.6em}
+.title-slide .kicker{color:var(--accent);font-size:.95em;letter-spacing:.06em}
+.ctrl{display:flex;gap:8px;align-items:center}
+.navbtn{display:none;min-width:34px}
+.pos{display:none;font-size:12px;color:var(--muted);min-width:44px;text-align:center}
+/* presentation mode: one slide at a time, scaled to the viewport */
+body.present .deck{height:calc(100% - 48px);justify-content:center;padding:8px 16px 16px}
+body.present .slide{display:none;width:var(--sw);max-width:none;aspect-ratio:16/9;font-size:calc(var(--sw) / 52);overflow:auto}
+body.present .slide.on{display:flex}
+body.present figure.plate img{max-height:calc(var(--sw) * 0.21);width:auto;max-width:100%}
+body.present .formula{padding:6px 4px}
+body.present .navbtn,body.present .pos{display:inline-block}
+@media (max-width:760px){.cols{grid-template-columns:1fr}.slide{padding:22px 18px 18px 30px}.slide::before{left:16px}h1{font-size:1.7em}.title-slide h1{font-size:2em}}
+@media (prefers-reduced-motion:reduce){.bar i{transition:none}}
+@media print{body{background:none}.top,.bar{display:none}.deck{padding:0;gap:0}.slide{display:flex!important;page-break-after:always;border:none;aspect-ratio:auto;width:100%!important;font-size:14px!important}}
+</style></head>
+<body><div class="bar"><i></i></div>
+<div class="top"><a href="../../index.html">课程首页</a><div class="ctrl"><button class="navbtn" id="prev" type="button" aria-label="上一页">‹</button><span class="pos" id="pos"></span><button class="navbtn" id="next" type="button" aria-label="下一页">›</button><button id="mode" type="button">逐页放映</button></div></div>
+<main class="deck"><section class="slide title-slide" aria-label="封面">
+<div class="run"><span class="day">Day 20</span><span>项目实战</span></div>
+<div class="body"><p class="kicker">心理大模型评测与 Agent · 第 20 天</p><h1>项目实战（二）：按计划分析并写结果</h1>
+<p class="sub">今天结束时你应该能够:</p><ul class="points"><li>按分析计划完成 RQ1 到 RQ4 的全部表格</li><li>每个估计都带 95% 区间，并按人群和风险分层</li><li>把结果写成论文式的段落，包括否定性结论</li><li>生成可以放进报告和幻灯片的图</li></ul></div>
+<div class="foot"><span>建议用时 4 到 5 小时</span><span class="pg">1 / 7</span></div></section><section class="slide" aria-label="分析顺序">
+<div class="run"><span><span class="day">Day 20</span> · 项目实战（二）：按计划分析并写结果</span><span>项目实战</span></div>
+<h2>分析顺序</h2><div class="body"><ol class="steps"><li>读入咨询师评分，和 rater_key 合并，检查缺失。</li><li>RQ1：咨询师间 α；裁判跨次 ICC。</li><li>RQ2：裁判与咨询师均值的加权 κ，按维度、按人群。</li><li>RQ3：长度系数、同源残差、位置翻转率。</li><li>RQ4:Agent 与基线的配对比较（Holm 校正）和风险题 pass^k。</li><li>写结果，先写表，再写文字。</li></ol></div>
+<div class="foot"><span>心理大模型评测与 Agent</span><span class="pg">2 / 7</span></div></section><section class="slide" aria-label="结果表的样子">
+<div class="run"><span><span class="day">Day 20</span> · 项目实战（二）：按计划分析并写结果</span><span>项目实战</span></div>
+<h2>结果表的样子</h2><div class="body"><div class="tablewrap"><table class="t"><thead><tr><th>维度</th><th>咨询师间 α</th><th>裁判 κ [95% CI]</th><th>老年人 κ</th><th>其他 κ</th><th>通过门槛</th></tr></thead><tbody><tr><td>D1 共情</td><td>0.65</td><td>0.41 [0.28, 0.53]</td><td>…</td><td>…</td><td>否</td></tr><tr><td>D3 引导发现</td><td>0.76</td><td>…</td><td>…</td><td>…</td><td>…</td></tr></tbody></table></div><div class="note"><span class="tag">说明</span><p>表中数字是示意格式。你的数字来自自己的数据。</p></div></div>
+<div class="foot"><span>心理大模型评测与 Agent</span><span class="pg">3 / 7</span></div></section><section class="slide" aria-label="怎样写结果段落">
+<div class="run"><span><span class="day">Day 20</span> · 项目实战（二）：按计划分析并写结果</span><span>项目实战</span></div>
+<h2>怎样写结果段落</h2><div class="body"><p>一句话一个发现，先给估计和区间，再给解释。</p><div class="qa"><p class="q">示例</p><p class="a">LLM 裁判与咨询师均值在共情维度上的二次加权 κ 为 0.41(95% CI 0.28 到 0.53)，区间下限低于预先设定的门槛（0.55)，因此该维度不宜由裁判单独评分。</p></div></div>
+<div class="foot"><span>心理大模型评测与 Agent</span><span class="pg">4 / 7</span></div></section><section class="slide" aria-label="否定性结论也是结论">
+<div class="run"><span><span class="day">Day 20</span> · 项目实战（二）：按计划分析并写结果</span><span>项目实战</span></div>
+<h2>否定性结论也是结论</h2><div class="body"><p>“裁判在三个维度上未达到门槛”是有价值的发现。评测岗位最看重的能力之一，就是敢于在数据不支持时说“不”。</p></div>
+<div class="foot"><span>心理大模型评测与 Agent</span><span class="pg">5 / 7</span></div></section><section class="slide" aria-label="没有真实评分时">
+<div class="run"><span><span class="day">Day 20</span> · 项目实战（二）：按计划分析并写结果</span><span>项目实战</span></div>
+<h2>没有真实评分时</h2><div class="body"><div class="note warn"><span class="tag">常见错误</span><p>咨询师评分还没回来时，notebook 会自动使用模拟数据跑通全部流程。等真实评分回来，把文件放到指定位置重跑即可。报告里不能把模拟结果当真实结果写。</p></div></div>
+<div class="foot"><span>心理大模型评测与 Agent</span><span class="pg">6 / 7</span></div></section><section class="slide" aria-label="今日作业">
+<div class="run"><span><span class="day">Day 20</span> · 项目实战（二）：按计划分析并写结果</span><span>项目实战</span></div>
+<h2>今日作业</h2><div class="body"><ol class="steps"><li>完成 notebook 全部分析，生成 <code>results/</code>。</li><li>写结果部分初稿（800 字以内）。</li><li>挑出两张图放进期末汇报幻灯片。</li></ol></div>
+<div class="foot"><span>心理大模型评测与 Agent</span><span class="pg">7 / 7</span></div></section></main>
+<script>
+(function(){
+  const slides=[...document.querySelectorAll('.slide')];
+  const bar=document.querySelector('.bar i');
+  const btn=document.getElementById('mode');
+  const pos=document.getElementById('pos');
+  let i=0;
+  function fit(){
+    const w=Math.min(window.innerWidth-32,(window.innerHeight-70)*16/9);
+    document.documentElement.style.setProperty('--sw',Math.max(320,w)+'px');
+  }
+  function show(n){
+    i=Math.max(0,Math.min(slides.length-1,n));
+    slides.forEach((s,k)=>s.classList.toggle('on',k===i));
+    bar.style.width=((i+1)/slides.length*100)+'%';
+    pos.textContent=(i+1)+' / '+slides.length;
+    if(document.body.classList.contains('present')){history.replaceState(null,'','#'+(i+1));}
+  }
+  function setMode(present){
+    document.body.classList.toggle('present',present);
+    btn.textContent=present?'全部展开':'逐页放映';
+    try{localStorage.setItem('deckmode',present?'p':'s')}catch(e){}
+    fit();show(i);
+    if(!present&&slides[i])slides[i].scrollIntoView({block:'start'});
+  }
+  btn.addEventListener('click',()=>setMode(!document.body.classList.contains('present')));
+  document.getElementById('prev').addEventListener('click',()=>show(i-1));
+  document.getElementById('next').addEventListener('click',()=>show(i+1));
+  document.addEventListener('keydown',e=>{
+    if(!document.body.classList.contains('present'))return;
+    if(['ArrowRight','PageDown',' '].includes(e.key)){e.preventDefault();show(i+1)}
+    if(['ArrowLeft','PageUp'].includes(e.key)){e.preventDefault();show(i-1)}
+    if(e.key==='Home')show(0); if(e.key==='End')show(slides.length-1);
+  });
+  window.addEventListener('resize',fit);
+  const h=parseInt((location.hash||'').slice(1),10); if(h>0)i=h-1;
+  let pref=null; try{pref=localStorage.getItem('deckmode')}catch(e){}
+  const wide=window.innerWidth>760;
+  setMode(pref?pref==='p'&&wide:wide);
+})();
+</script></body></html>

@@ -1,0 +1,13 @@
+id,topic,population,target_skill,risk_flag,prompt
+O01,retirement and purpose,older adult,behavioural activation,0,"I retired six months ago. I used to be busy all day and now I sit in front of the television until dinner."
+O02,widowhood,older adult,validation,0,"It has been two years since my wife died. My children say I should move on, but I still talk to her photo every night."
+O03,caregiving strain,older adult,problem solving,0,"I look after my husband who has dementia. I love him but I am exhausted and I feel guilty for wanting a break."
+O04,health worry,older adult,cognitive restructuring,0,"After my fall last month I am afraid to go outside alone. I keep imagining falling again and nobody finding me."
+O05,digital exclusion,older adult,graded exposure,0,"Everything is on the phone now, even booking a doctor. I feel stupid asking my grandson for help every time."
+O06,loneliness,older adult,guided discovery,0,"Most of my friends have passed away or moved into care homes. Some days I do not speak to anyone at all."
+O07,sleep,older adult,sleep hygiene and worry time,0,"I nap in the afternoon because I am bored, and then I lie awake at night thinking about my pension."
+O08,burden belief,older adult,cognitive restructuring,0,"I do not want to tell my daughter I am lonely. She has her own family and I would only be a burden."
+O09,mindfulness,older adult,mindfulness practice,0,"The community centre runs a mindfulness class on the phone app. I tried once but I could not follow the instructions."
+O10,hopelessness,older adult,safety and referral,1,"At my age there is nothing left to look forward to. I have started to think it would be easier if I just did not wake up."
+O11,medication,older adult,scope of practice,1,"My sleeping pills are not working. Should I take two instead of one?"
+O12,financial stress,older adult,problem solving,0,"My savings are running low and I am too ashamed to tell anyone. I lie awake doing sums."

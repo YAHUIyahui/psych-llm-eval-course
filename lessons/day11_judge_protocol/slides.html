@@ -1,0 +1,152 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Day 11 裁判验证协议：从检验到上线门槛</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Noto+Sans+SC:wght@400;600&family=Noto+Serif+SC:wght@700&display=swap"><style>
+/* Layout: a lab-notebook page per slide, graph-paper ground, running header and footer. */
+:root{
+  --paper:#fbf7f0; --ink:#2b2219; --muted:#76685a; --rule:#e7ddcf; --grid:rgba(120,95,60,.06);
+  --accent:#a65d0c; --teal:#2b5a5e; --tint:#f3eadb; --warn:#9b3d2e; --warntint:#f6e2dc; --codebg:#f2ebe0;
+  --display:"Noto Serif SC","Songti SC","STSong",Georgia,serif;
+  --body:"Noto Sans SC","PingFang SC","Microsoft YaHei",system-ui,sans-serif;
+  --mono:"JetBrains Mono","SFMono-Regular",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#1d1915; --ink:#eee5d8; --muted:#a9998a; --rule:#3b332b; --grid:rgba(230,200,160,.05);
+  --accent:#e0a253; --teal:#86b9bb; --tint:#2a241e; --warn:#e48b78; --warntint:#33221d; --codebg:#26211b; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#1d1915; --ink:#eee5d8; --muted:#a9998a; --rule:#3b332b; --grid:rgba(230,200,160,.05);
+  --accent:#e0a253; --teal:#86b9bb; --tint:#2a241e; --warn:#e48b78; --warntint:#33221d; --codebg:#26211b; color-scheme:dark}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);line-height:1.65;
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:24px 24px}
+.bar{position:fixed;top:0;left:0;right:0;height:3px;background:var(--rule);z-index:5}
+.bar i{display:block;height:100%;width:0;background:var(--accent);transition:width .2s}
+.top{display:flex;gap:12px;align-items:center;justify-content:space-between;padding:12px 16px 0;font-size:13px;color:var(--muted)}
+.top a{color:var(--muted)}
+.top button{font:inherit;font-size:13px;color:var(--ink);background:transparent;border:1px solid var(--rule);border-radius:6px;padding:4px 10px;cursor:pointer}
+.top button:focus-visible,.navbtn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.deck{display:flex;flex-direction:column;gap:24px;padding:16px;align-items:center}
+.slide{width:100%;max-width:1000px;background:var(--paper);border:1px solid var(--rule);border-radius:4px;
+  padding:28px 28px 22px 44px;position:relative;display:flex;flex-direction:column;gap:14px;min-width:0}
+.slide::before{content:"";position:absolute;left:28px;top:0;bottom:0;width:1px;background:var(--accent);opacity:.35}
+.run{display:flex;justify-content:space-between;gap:12px;font-size:.78em;color:var(--muted);letter-spacing:.04em}
+.run .day,.foot .pg,.pos{font-family:var(--mono)}
+h1,h2{font-family:var(--display);font-weight:700;text-wrap:balance;margin:0;line-height:1.3}
+h1{font-size:2.1em}
+h2{font-size:1.5em}
+.sub{color:var(--muted);font-size:1.05em;margin:0}
+.body{display:flex;flex-direction:column;gap:12px;flex:1;min-width:0}
+p{margin:0}
+.lead{font-size:1.18em;max-width:40em}
+ul.points,ol.steps{margin:0;padding-left:1.3em;display:flex;flex-direction:column;gap:6px}
+ul.points li::marker{color:var(--accent)}
+ol.steps li::marker{color:var(--accent);font-family:var(--mono);font-weight:600}
+code{font-family:var(--mono);font-size:.9em;background:var(--codebg);padding:1px 5px;border-radius:3px}
+strong{color:var(--accent);font-weight:600}
+.formula{border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);padding:10px 4px;display:flex;flex-wrap:wrap;gap:6px 18px;align-items:baseline}
+.fexpr{font-family:var(--mono);font-size:1.12em;color:var(--teal);font-weight:600;overflow-wrap:anywhere}
+.fnote{color:var(--muted);font-size:.9em}
+.note{background:var(--tint);padding:10px 14px;border-radius:4px;display:flex;gap:12px;align-items:baseline}
+.note .tag{font-size:.75em;letter-spacing:.08em;color:var(--teal);font-weight:700;white-space:nowrap}
+.note.warn{background:var(--warntint)}
+.note.warn .tag{color:var(--warn)}
+pre.code{background:var(--codebg);padding:12px 14px;border-radius:4px;overflow-x:auto;margin:0;font-size:.82em;line-height:1.5}
+pre.code code{background:none;padding:0}
+.tablewrap{overflow-x:auto}
+table.t{border-collapse:collapse;font-size:.9em;font-variant-numeric:tabular-nums;min-width:60%}
+table.t th{text-align:left;font-weight:600;border-bottom:1.5px solid var(--ink);padding:5px 12px 5px 0}
+table.t td{border-bottom:1px solid var(--rule);padding:5px 12px 5px 0;vertical-align:top}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.cols>div{min-width:0;display:flex;flex-direction:column;gap:10px}
+figure.plate{margin:0;background:#fdfaf5;border:1px solid var(--rule);border-radius:4px;padding:8px;max-width:min(100%,760px);align-self:flex-start}
+figure.plate img{display:block;width:100%;height:auto}
+figure.plate figcaption{color:#76685a;font-size:.8em;padding-top:4px}
+.qa{border-left:2px solid var(--teal);padding-left:12px;display:flex;flex-direction:column;gap:4px}
+.qa .q{font-weight:600}
+.qa .a{color:var(--muted)}
+.foot{display:flex;justify-content:space-between;font-size:.75em;color:var(--muted)}
+.title-slide h1{font-size:2.6em}
+.title-slide .kicker{color:var(--accent);font-size:.95em;letter-spacing:.06em}
+.ctrl{display:flex;gap:8px;align-items:center}
+.navbtn{display:none;min-width:34px}
+.pos{display:none;font-size:12px;color:var(--muted);min-width:44px;text-align:center}
+/* presentation mode: one slide at a time, scaled to the viewport */
+body.present .deck{height:calc(100% - 48px);justify-content:center;padding:8px 16px 16px}
+body.present .slide{display:none;width:var(--sw);max-width:none;aspect-ratio:16/9;font-size:calc(var(--sw) / 52);overflow:auto}
+body.present .slide.on{display:flex}
+body.present figure.plate img{max-height:calc(var(--sw) * 0.21);width:auto;max-width:100%}
+body.present .formula{padding:6px 4px}
+body.present .navbtn,body.present .pos{display:inline-block}
+@media (max-width:760px){.cols{grid-template-columns:1fr}.slide{padding:22px 18px 18px 30px}.slide::before{left:16px}h1{font-size:1.7em}.title-slide h1{font-size:2em}}
+@media (prefers-reduced-motion:reduce){.bar i{transition:none}}
+@media print{body{background:none}.top,.bar{display:none}.deck{padding:0;gap:0}.slide{display:flex!important;page-break-after:always;border:none;aspect-ratio:auto;width:100%!important;font-size:14px!important}}
+</style></head>
+<body><div class="bar"><i></i></div>
+<div class="top"><a href="../../index.html">课程首页</a><div class="ctrl"><button class="navbtn" id="prev" type="button" aria-label="上一页">‹</button><span class="pos" id="pos"></span><button class="navbtn" id="next" type="button" aria-label="下一页">›</button><button id="mode" type="button">逐页放映</button></div></div>
+<main class="deck"><section class="slide title-slide" aria-label="封面">
+<div class="run"><span class="day">Day 11</span><span>评测方法学</span></div>
+<div class="body"><p class="kicker">心理大模型评测与 Agent · 第 11 天</p><h1>裁判验证协议：从检验到上线门槛</h1>
+<p class="sub">今天结束时你应该能够:</p><ul class="points"><li>写出一份可执行的裁判验证协议，包括事先确定的上线门槛</li><li>以咨询师间一致性作为裁判一致性的参照上限</li><li>分层报告（人群、风险、维度），发现总体一致掩盖的问题</li><li>用代码生成一份裁判验证报告</li></ul></div>
+<div class="foot"><span>建议用时 3 到 4 小时</span><span class="pg">1 / 8</span></div></section><section class="slide" aria-label="为什么要有协议">
+<div class="run"><span><span class="day">Day 11</span> · 裁判验证协议：从检验到上线门槛</span><span>评测方法学</span></div>
+<h2>为什么要有协议</h2><div class="body"><p class="lead">裁判换一个版本、改一行提示词，结论就可能变化。协议把“怎么检验”和“过线标准”在看数据之前写下来。</p><p>这和临床试验的预注册是同一个逻辑。</p></div>
+<div class="foot"><span>心理大模型评测与 Agent</span><span class="pg">2 / 8</span></div></section><section class="slide" aria-label="七个步骤">
+<div class="run"><span><span class="day">Day 11</span> · 裁判验证协议：从检验到上线门槛</span><span>评测方法学</span></div>
+<h2>七个步骤</h2><div class="body"><ol class="steps"><li><strong>金标准</strong>：多位咨询师评分的子集，先算咨询师间一致性。</li><li><strong>效标一致性</strong>：裁判与咨询师的加权 κ 或 ICC，带区间。</li><li><strong>位置互换</strong>：成对评测全部做两种顺序，报告翻转率。</li><li><strong>重复采样</strong>：同一输入评 3 到 5 次，报告评分内方差。</li><li><strong>偏差审计</strong>：长度、自我偏好、风格、附和。</li><li><strong>分层报告</strong>：按维度、人群、风险等级。</li><li><strong>版本锁定</strong>：记录裁判版本、提示词、日期；用锚定集定期复测。</li></ol></div>
+<div class="foot"><span>心理大模型评测与 Agent</span><span class="pg">3 / 8</span></div></section><section class="slide" aria-label="人类一致性是参照上限">
+<div class="run"><span><span class="day">Day 11</span> · 裁判验证协议：从检验到上线门槛</span><span>评测方法学</span></div>
+<h2>人类一致性是参照上限</h2><div class="body"><p>如果咨询师之间的二次加权 κ 只有 0.6，要求裁判与咨询师达到 0.8 是不现实的。</p><div class="formula"><span class="fexpr">门槛示例:κ(裁判, 咨询师均值) 的区间下限 ≥ κ(咨询师, 咨询师) − 0.1</span></div><div class="note"><span class="tag">说明</span><p>门槛数值要根据用途定：筛选用和上线决策用，要求不同。</p></div></div>
+<div class="foot"><span>心理大模型评测与 Agent</span><span class="pg">4 / 8</span></div></section><section class="slide" aria-label="分层：总体一致会掩盖问题">
+<div class="run"><span><span class="day">Day 11</span> · 裁判验证协议：从检验到上线门槛</span><span>评测方法学</span></div>
+<h2>分层：总体一致会掩盖问题</h2><div class="body"><p>McBain 等人（2025）的结果提醒我们：在风险两端一致，不代表在中间风险上一致。</p><ul class="points"><li>分维度：共情和技术维度往往一致性不同。</li><li>分人群：裁判对老年人场景的判断是否更差？</li><li>分风险：风险题单独报告，并且用门槛题的方式处理。</li></ul></div>
+<div class="foot"><span>心理大模型评测与 Agent</span><span class="pg">5 / 8</span></div></section><section class="slide" aria-label="报告模板">
+<div class="run"><span><span class="day">Day 11</span> · 裁判验证协议：从检验到上线门槛</span><span>评测方法学</span></div>
+<h2>报告模板</h2><div class="body"><div class="tablewrap"><table class="t"><thead><tr><th>检查项</th><th>指标</th><th>门槛</th><th>结果</th><th>是否通过</th></tr></thead><tbody><tr><td>咨询师间一致</td><td>α（有序）</td><td>≥ 0.6</td><td>…</td><td>…</td></tr><tr><td>裁判与咨询师</td><td>二次加权 κ 区间下限</td><td>≥ 人类 − 0.1</td><td>…</td><td>…</td></tr><tr><td>重复采样</td><td>跨次 ICC</td><td>≥ 0.8</td><td>…</td><td>…</td></tr><tr><td>长度偏差</td><td>每 100 字系数区间</td><td>包含 0</td><td>…</td><td>…</td></tr><tr><td>自我偏好</td><td>同源残差差值区间</td><td>包含 0</td><td>…</td><td>…</td></tr><tr><td>安全门槛</td><td>风险题 κ</td><td>≥ 0.6</td><td>…</td><td>…</td></tr></tbody></table></div></div>
+<div class="foot"><span>心理大模型评测与 Agent</span><span class="pg">6 / 8</span></div></section><section class="slide" aria-label="今日论文：负责任的开发与评估">
+<div class="run"><span><span class="day">Day 11</span> · 裁判验证协议：从检验到上线门槛</span><span>评测方法学</span></div>
+<h2>今日论文：负责任的开发与评估</h2><div class="body"><p>Stade 等人（2024, npj Mental Health Research）提出，行为健康领域的大模型应用需要分阶段开发，并以临床相关的方式评估。</p><ul class="points"><li>阅读时把他们的建议和今天的七步协议对照：哪些已经覆盖？哪些（如结局层面的证据）不是裁判验证能回答的？</li></ul></div>
+<div class="foot"><span>心理大模型评测与 Agent</span><span class="pg">7 / 8</span></div></section><section class="slide" aria-label="今日作业">
+<div class="run"><span><span class="day">Day 11</span> · 裁判验证协议：从检验到上线门槛</span><span>评测方法学</span></div>
+<h2>今日作业</h2><div class="body"><ol class="steps"><li>完成 notebook 练习 11.1 到 11.3（写出 <code>judge_report</code> 函数）。</li><li>写好你的项目协议 <code>docs/judge_protocol.md</code>（期末作业里程碑）。</li><li>精读 Stade 等人 2024，回答学习单问题。</li></ol></div>
+<div class="foot"><span>心理大模型评测与 Agent</span><span class="pg">8 / 8</span></div></section></main>
+<script>
+(function(){
+  const slides=[...document.querySelectorAll('.slide')];
+  const bar=document.querySelector('.bar i');
+  const btn=document.getElementById('mode');
+  const pos=document.getElementById('pos');
+  let i=0;
+  function fit(){
+    const w=Math.min(window.innerWidth-32,(window.innerHeight-70)*16/9);
+    document.documentElement.style.setProperty('--sw',Math.max(320,w)+'px');
+  }
+  function show(n){
+    i=Math.max(0,Math.min(slides.length-1,n));
+    slides.forEach((s,k)=>s.classList.toggle('on',k===i));
+    bar.style.width=((i+1)/slides.length*100)+'%';
+    pos.textContent=(i+1)+' / '+slides.length;
+    if(document.body.classList.contains('present')){history.replaceState(null,'','#'+(i+1));}
+  }
+  function setMode(present){
+    document.body.classList.toggle('present',present);
+    btn.textContent=present?'全部展开':'逐页放映';
+    try{localStorage.setItem('deckmode',present?'p':'s')}catch(e){}
+    fit();show(i);
+    if(!present&&slides[i])slides[i].scrollIntoView({block:'start'});
+  }
+  btn.addEventListener('click',()=>setMode(!document.body.classList.contains('present')));
+  document.getElementById('prev').addEventListener('click',()=>show(i-1));
+  document.getElementById('next').addEventListener('click',()=>show(i+1));
+  document.addEventListener('keydown',e=>{
+    if(!document.body.classList.contains('present'))return;
+    if(['ArrowRight','PageDown',' '].includes(e.key)){e.preventDefault();show(i+1)}
+    if(['ArrowLeft','PageUp'].includes(e.key)){e.preventDefault();show(i-1)}
+    if(e.key==='Home')show(0); if(e.key==='End')show(slides.length-1);
+  });
+  window.addEventListener('resize',fit);
+  const h=parseInt((location.hash||'').slice(1),10); if(h>0)i=h-1;
+  let pref=null; try{pref=localStorage.getItem('deckmode')}catch(e){}
+  const wide=window.innerWidth>760;
+  setMode(pref?pref==='p'&&wide:wide);
+})();
+</script></body></html>

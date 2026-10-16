@@ -1,0 +1,16 @@
+cff-version: 1.2.0
+message: "如果你在教学或研究中使用了本课程材料,请按以下信息引用。"
+title: "心理大模型评测与 Agent:28 天课程"
+type: software
+authors:
+  - family-names: Wang
+    given-names: Yahui
+    orcid: "https://orcid.org/0000-0001-9354-8507"
+version: 1.0.0
+date-released: 2026-10-14
+keywords:
+  - LLM evaluation
+  - LLM-as-a-judge
+  - psychometrics
+  - digital mental health
+  - CBT

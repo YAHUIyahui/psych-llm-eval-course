@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools>=64"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "course"
+version = "1.0.0"
+description = "Course library: evaluating psychology-focused LLMs and agents"
+requires-python = ">=3.10"
+dependencies = ["numpy", "scipy", "pandas", "matplotlib", "scikit-learn"]
+
+[project.optional-dependencies]
+dev = ["pytest", "jupyter", "nbconvert", "nbformat", "ipykernel", "markdown"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]

@@ -1,0 +1,149 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Day 26 简历与项目讲述：把研究翻译成岗位语言</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Noto+Sans+SC:wght@400;600&family=Noto+Serif+SC:wght@700&display=swap"><style>
+/* Layout: a lab-notebook page per slide, graph-paper ground, running header and footer. */
+:root{
+  --paper:#fbf7f0; --ink:#2b2219; --muted:#76685a; --rule:#e7ddcf; --grid:rgba(120,95,60,.06);
+  --accent:#a65d0c; --teal:#2b5a5e; --tint:#f3eadb; --warn:#9b3d2e; --warntint:#f6e2dc; --codebg:#f2ebe0;
+  --display:"Noto Serif SC","Songti SC","STSong",Georgia,serif;
+  --body:"Noto Sans SC","PingFang SC","Microsoft YaHei",system-ui,sans-serif;
+  --mono:"JetBrains Mono","SFMono-Regular",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#1d1915; --ink:#eee5d8; --muted:#a9998a; --rule:#3b332b; --grid:rgba(230,200,160,.05);
+  --accent:#e0a253; --teal:#86b9bb; --tint:#2a241e; --warn:#e48b78; --warntint:#33221d; --codebg:#26211b; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#1d1915; --ink:#eee5d8; --muted:#a9998a; --rule:#3b332b; --grid:rgba(230,200,160,.05);
+  --accent:#e0a253; --teal:#86b9bb; --tint:#2a241e; --warn:#e48b78; --warntint:#33221d; --codebg:#26211b; color-scheme:dark}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);line-height:1.65;
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:24px 24px}
+.bar{position:fixed;top:0;left:0;right:0;height:3px;background:var(--rule);z-index:5}
+.bar i{display:block;height:100%;width:0;background:var(--accent);transition:width .2s}
+.top{display:flex;gap:12px;align-items:center;justify-content:space-between;padding:12px 16px 0;font-size:13px;color:var(--muted)}
+.top a{color:var(--muted)}
+.top button{font:inherit;font-size:13px;color:var(--ink);background:transparent;border:1px solid var(--rule);border-radius:6px;padding:4px 10px;cursor:pointer}
+.top button:focus-visible,.navbtn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.deck{display:flex;flex-direction:column;gap:24px;padding:16px;align-items:center}
+.slide{width:100%;max-width:1000px;background:var(--paper);border:1px solid var(--rule);border-radius:4px;
+  padding:28px 28px 22px 44px;position:relative;display:flex;flex-direction:column;gap:14px;min-width:0}
+.slide::before{content:"";position:absolute;left:28px;top:0;bottom:0;width:1px;background:var(--accent);opacity:.35}
+.run{display:flex;justify-content:space-between;gap:12px;font-size:.78em;color:var(--muted);letter-spacing:.04em}
+.run .day,.foot .pg,.pos{font-family:var(--mono)}
+h1,h2{font-family:var(--display);font-weight:700;text-wrap:balance;margin:0;line-height:1.3}
+h1{font-size:2.1em}
+h2{font-size:1.5em}
+.sub{color:var(--muted);font-size:1.05em;margin:0}
+.body{display:flex;flex-direction:column;gap:12px;flex:1;min-width:0}
+p{margin:0}
+.lead{font-size:1.18em;max-width:40em}
+ul.points,ol.steps{margin:0;padding-left:1.3em;display:flex;flex-direction:column;gap:6px}
+ul.points li::marker{color:var(--accent)}
+ol.steps li::marker{color:var(--accent);font-family:var(--mono);font-weight:600}
+code{font-family:var(--mono);font-size:.9em;background:var(--codebg);padding:1px 5px;border-radius:3px}
+strong{color:var(--accent);font-weight:600}
+.formula{border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);padding:10px 4px;display:flex;flex-wrap:wrap;gap:6px 18px;align-items:baseline}
+.fexpr{font-family:var(--mono);font-size:1.12em;color:var(--teal);font-weight:600;overflow-wrap:anywhere}
+.fnote{color:var(--muted);font-size:.9em}
+.note{background:var(--tint);padding:10px 14px;border-radius:4px;display:flex;gap:12px;align-items:baseline}
+.note .tag{font-size:.75em;letter-spacing:.08em;color:var(--teal);font-weight:700;white-space:nowrap}
+.note.warn{background:var(--warntint)}
+.note.warn .tag{color:var(--warn)}
+pre.code{background:var(--codebg);padding:12px 14px;border-radius:4px;overflow-x:auto;margin:0;font-size:.82em;line-height:1.5}
+pre.code code{background:none;padding:0}
+.tablewrap{overflow-x:auto}
+table.t{border-collapse:collapse;font-size:.9em;font-variant-numeric:tabular-nums;min-width:60%}
+table.t th{text-align:left;font-weight:600;border-bottom:1.5px solid var(--ink);padding:5px 12px 5px 0}
+table.t td{border-bottom:1px solid var(--rule);padding:5px 12px 5px 0;vertical-align:top}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.cols>div{min-width:0;display:flex;flex-direction:column;gap:10px}
+figure.plate{margin:0;background:#fdfaf5;border:1px solid var(--rule);border-radius:4px;padding:8px;max-width:min(100%,760px);align-self:flex-start}
+figure.plate img{display:block;width:100%;height:auto}
+figure.plate figcaption{color:#76685a;font-size:.8em;padding-top:4px}
+.qa{border-left:2px solid var(--teal);padding-left:12px;display:flex;flex-direction:column;gap:4px}
+.qa .q{font-weight:600}
+.qa .a{color:var(--muted)}
+.foot{display:flex;justify-content:space-between;font-size:.75em;color:var(--muted)}
+.title-slide h1{font-size:2.6em}
+.title-slide .kicker{color:var(--accent);font-size:.95em;letter-spacing:.06em}
+.ctrl{display:flex;gap:8px;align-items:center}
+.navbtn{display:none;min-width:34px}
+.pos{display:none;font-size:12px;color:var(--muted);min-width:44px;text-align:center}
+/* presentation mode: one slide at a time, scaled to the viewport */
+body.present .deck{height:calc(100% - 48px);justify-content:center;padding:8px 16px 16px}
+body.present .slide{display:none;width:var(--sw);max-width:none;aspect-ratio:16/9;font-size:calc(var(--sw) / 52);overflow:auto}
+body.present .slide.on{display:flex}
+body.present figure.plate img{max-height:calc(var(--sw) * 0.21);width:auto;max-width:100%}
+body.present .formula{padding:6px 4px}
+body.present .navbtn,body.present .pos{display:inline-block}
+@media (max-width:760px){.cols{grid-template-columns:1fr}.slide{padding:22px 18px 18px 30px}.slide::before{left:16px}h1{font-size:1.7em}.title-slide h1{font-size:2em}}
+@media (prefers-reduced-motion:reduce){.bar i{transition:none}}
+@media print{body{background:none}.top,.bar{display:none}.deck{padding:0;gap:0}.slide{display:flex!important;page-break-after:always;border:none;aspect-ratio:auto;width:100%!important;font-size:14px!important}}
+</style></head>
+<body><div class="bar"><i></i></div>
+<div class="top"><a href="../../index.html">课程首页</a><div class="ctrl"><button class="navbtn" id="prev" type="button" aria-label="上一页">‹</button><span class="pos" id="pos"></span><button class="navbtn" id="next" type="button" aria-label="下一页">›</button><button id="mode" type="button">逐页放映</button></div></div>
+<main class="deck"><section class="slide title-slide" aria-label="封面">
+<div class="run"><span class="day">Day 26</span><span>求职准备</span></div>
+<div class="body"><p class="kicker">心理大模型评测与 Agent · 第 26 天</p><h1>简历与项目讲述：把研究翻译成岗位语言</h1>
+<p class="sub">今天结束时你应该能够:</p><ul class="points"><li>把岗位描述拆成能力清单，并为每一项找到证据</li><li>按“动作、方法、结果、意义”写简历条目</li><li>录一段 2 分钟的项目介绍</li><li>针对三个不同岗位调整侧重点</li></ul></div>
+<div class="foot"><span>建议用时 3 到 4 小时</span><span class="pg">1 / 7</span></div></section><section class="slide" aria-label="先拆岗位描述">
+<div class="run"><span><span class="day">Day 26</span> · 简历与项目讲述：把研究翻译成岗位语言</span><span>求职准备</span></div>
+<h2>先拆岗位描述</h2><div class="body"><div class="tablewrap"><table class="t"><thead><tr><th>岗位要求（腾讯混元评测度量）</th><th>你的证据</th></tr></thead><tbody><tr><td>一致性与信度效度分析</td><td>课程项目：κ、α、ICC 与区间；博士阶段量表研究</td></tr><tr><td>假设检验与置信区间</td><td>RCT、三层元分析；项目中的配对比较与 Holm 校正</td></tr><tr><td>项目反应理论</td><td>课程第 6、8 天；项目题目分析</td></tr><tr><td>LLM-as-judge 校准与偏差审计</td><td>期末项目：七步协议、偏差检验</td></tr><tr><td>数据污染检测</td><td>课程第 13 天；项目污染说明</td></tr><tr><td>因果推断基础</td><td>课程第 22 天；RCT 设计经验</td></tr><tr><td>Python 与统计工具</td><td>统计硕士；Micron 数据科学工程师；课程代码库</td></tr></tbody></table></div></div>
+<div class="foot"><span>心理大模型评测与 Agent</span><span class="pg">2 / 7</span></div></section><section class="slide" aria-label="简历条目的写法">
+<div class="run"><span><span class="day">Day 26</span> · 简历与项目讲述：把研究翻译成岗位语言</span><span>求职准备</span></div>
+<h2>简历条目的写法</h2><div class="body"><div class="formula"><span class="fexpr">动作 + 方法 + 结果(带数字) + 意义</span></div><div class="qa"><p class="q">示例（期末项目，数字换成你自己的）</p><p class="a">设计并实施 LLM 裁判效度研究：3 位持证咨询师盲评 84 条回复，裁判与咨询师二次加权 κ 为 __(95% CI __)，在 __ 个维度上未达预设门槛；识别出每 100 字 __ 分的长度偏差。</p></div><div class="note warn"><span class="tag">原则</span><p>只写真实做过的。数字必须和仓库里的结果文件一致。</p></div></div>
+<div class="foot"><span>心理大模型评测与 Agent</span><span class="pg">3 / 7</span></div></section><section class="slide" aria-label="把已有经历翻译成岗位语言">
+<div class="run"><span><span class="day">Day 26</span> · 简历与项目讲述：把研究翻译成岗位语言</span><span>求职准备</span></div>
+<h2>把已有经历翻译成岗位语言</h2><div class="body"><div class="tablewrap"><table class="t"><thead><tr><th>原来的写法</th><th>评测岗位的写法</th></tr></thead><tbody><tr><td>三层元分析</td><td>对 60 项随机对照试验的 385 个效应量做三层元分析，处理效应量的依赖结构与异质性</td></tr><tr><td>CBT 聊天机器人 RCT</td><td>设计并完成生成式 CBT 聊天机器人的随机对照试验，以效应量和区间报告结局</td></tr><tr><td>数据科学工程师</td><td>在 Micron 三年，用机器学习与 BERT 类模型处理工业数据</td></tr></tbody></table></div><div class="note"><span class="tag">注意</span><p>数字以你 CV 上的为准，这里只示范写法。</p></div></div>
+<div class="foot"><span>心理大模型评测与 Agent</span><span class="pg">4 / 7</span></div></section><section class="slide" aria-label="2 分钟项目介绍">
+<div class="run"><span><span class="day">Day 26</span> · 简历与项目讲述：把研究翻译成岗位语言</span><span>求职准备</span></div>
+<h2>2 分钟项目介绍</h2><div class="body"><ol class="steps"><li><strong>问题</strong>（20 秒）：心理健康 LLM 的评测依赖自动裁判，但裁判本身很少被检验。</li><li><strong>方法</strong>（40 秒）：咨询师金标准、七步协议、偏差检验、Agent 评测。</li><li><strong>结果</strong>（40 秒）：两三个最重要的数字，包括否定性结论。</li><li><strong>意义</strong>（20 秒）：这些发现对上线决策意味着什么。</li></ol></div>
+<div class="foot"><span>心理大模型评测与 Agent</span><span class="pg">5 / 7</span></div></section><section class="slide" aria-label="三个岗位的不同侧重">
+<div class="run"><span><span class="day">Day 26</span> · 简历与项目讲述：把研究翻译成岗位语言</span><span>求职准备</span></div>
+<h2>三个岗位的不同侧重</h2><div class="body"><div class="tablewrap"><table class="t"><thead><tr><th>岗位</th><th>侧重讲什么</th></tr></thead><tbody><tr><td>腾讯混元评测度量</td><td>测量理论、区间、门槛、否定性结论、规范落地</td></tr><tr><td>微信用户人格建模</td><td>状态与特质、证据门槛、画像的信效度、隐私</td></tr><tr><td>字节 AI 数据与安全评测</td><td>安全门槛、pass^k、轨迹检查、评分流程与质检</td></tr></tbody></table></div></div>
+<div class="foot"><span>心理大模型评测与 Agent</span><span class="pg">6 / 7</span></div></section><section class="slide" aria-label="今日作业">
+<div class="run"><span><span class="day">Day 26</span> · 简历与项目讲述：把研究翻译成岗位语言</span><span>求职准备</span></div>
+<h2>今日作业</h2><div class="body"><ol class="steps"><li>完成 notebook 的岗位匹配表。</li><li>写出 3 条项目简历条目和 3 条已有经历条目。</li><li>录 2 分钟项目介绍，回放并修改一次。</li></ol></div>
+<div class="foot"><span>心理大模型评测与 Agent</span><span class="pg">7 / 7</span></div></section></main>
+<script>
+(function(){
+  const slides=[...document.querySelectorAll('.slide')];
+  const bar=document.querySelector('.bar i');
+  const btn=document.getElementById('mode');
+  const pos=document.getElementById('pos');
+  let i=0;
+  function fit(){
+    const w=Math.min(window.innerWidth-32,(window.innerHeight-70)*16/9);
+    document.documentElement.style.setProperty('--sw',Math.max(320,w)+'px');
+  }
+  function show(n){
+    i=Math.max(0,Math.min(slides.length-1,n));
+    slides.forEach((s,k)=>s.classList.toggle('on',k===i));
+    bar.style.width=((i+1)/slides.length*100)+'%';
+    pos.textContent=(i+1)+' / '+slides.length;
+    if(document.body.classList.contains('present')){history.replaceState(null,'','#'+(i+1));}
+  }
+  function setMode(present){
+    document.body.classList.toggle('present',present);
+    btn.textContent=present?'全部展开':'逐页放映';
+    try{localStorage.setItem('deckmode',present?'p':'s')}catch(e){}
+    fit();show(i);
+    if(!present&&slides[i])slides[i].scrollIntoView({block:'start'});
+  }
+  btn.addEventListener('click',()=>setMode(!document.body.classList.contains('present')));
+  document.getElementById('prev').addEventListener('click',()=>show(i-1));
+  document.getElementById('next').addEventListener('click',()=>show(i+1));
+  document.addEventListener('keydown',e=>{
+    if(!document.body.classList.contains('present'))return;
+    if(['ArrowRight','PageDown',' '].includes(e.key)){e.preventDefault();show(i+1)}
+    if(['ArrowLeft','PageUp'].includes(e.key)){e.preventDefault();show(i-1)}
+    if(e.key==='Home')show(0); if(e.key==='End')show(slides.length-1);
+  });
+  window.addEventListener('resize',fit);
+  const h=parseInt((location.hash||'').slice(1),10); if(h>0)i=h-1;
+  let pref=null; try{pref=localStorage.getItem('deckmode')}catch(e){}
+  const wide=window.innerWidth>760;
+  setMode(pref?pref==='p'&&wide:wide);
+})();
+</script></body></html>

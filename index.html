@@ -1,0 +1,165 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>心理大模型评测课</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Noto+Sans+SC:wght@400;600&family=Noto+Serif+SC:wght@700&display=swap"><style>
+/* Layout: a lab-notebook page per slide, graph-paper ground, running header and footer. */
+:root{
+  --paper:#fbf7f0; --ink:#2b2219; --muted:#76685a; --rule:#e7ddcf; --grid:rgba(120,95,60,.06);
+  --accent:#a65d0c; --teal:#2b5a5e; --tint:#f3eadb; --warn:#9b3d2e; --warntint:#f6e2dc; --codebg:#f2ebe0;
+  --display:"Noto Serif SC","Songti SC","STSong",Georgia,serif;
+  --body:"Noto Sans SC","PingFang SC","Microsoft YaHei",system-ui,sans-serif;
+  --mono:"JetBrains Mono","SFMono-Regular",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#1d1915; --ink:#eee5d8; --muted:#a9998a; --rule:#3b332b; --grid:rgba(230,200,160,.05);
+  --accent:#e0a253; --teal:#86b9bb; --tint:#2a241e; --warn:#e48b78; --warntint:#33221d; --codebg:#26211b; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#1d1915; --ink:#eee5d8; --muted:#a9998a; --rule:#3b332b; --grid:rgba(230,200,160,.05);
+  --accent:#e0a253; --teal:#86b9bb; --tint:#2a241e; --warn:#e48b78; --warntint:#33221d; --codebg:#26211b; color-scheme:dark}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);line-height:1.65;
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:24px 24px}
+.bar{position:fixed;top:0;left:0;right:0;height:3px;background:var(--rule);z-index:5}
+.bar i{display:block;height:100%;width:0;background:var(--accent);transition:width .2s}
+.top{display:flex;gap:12px;align-items:center;justify-content:space-between;padding:12px 16px 0;font-size:13px;color:var(--muted)}
+.top a{color:var(--muted)}
+.top button{font:inherit;font-size:13px;color:var(--ink);background:transparent;border:1px solid var(--rule);border-radius:6px;padding:4px 10px;cursor:pointer}
+.top button:focus-visible,.navbtn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.deck{display:flex;flex-direction:column;gap:24px;padding:16px;align-items:center}
+.slide{width:100%;max-width:1000px;background:var(--paper);border:1px solid var(--rule);border-radius:4px;
+  padding:28px 28px 22px 44px;position:relative;display:flex;flex-direction:column;gap:14px;min-width:0}
+.slide::before{content:"";position:absolute;left:28px;top:0;bottom:0;width:1px;background:var(--accent);opacity:.35}
+.run{display:flex;justify-content:space-between;gap:12px;font-size:.78em;color:var(--muted);letter-spacing:.04em}
+.run .day,.foot .pg,.pos{font-family:var(--mono)}
+h1,h2{font-family:var(--display);font-weight:700;text-wrap:balance;margin:0;line-height:1.3}
+h1{font-size:2.1em}
+h2{font-size:1.5em}
+.sub{color:var(--muted);font-size:1.05em;margin:0}
+.body{display:flex;flex-direction:column;gap:12px;flex:1;min-width:0}
+p{margin:0}
+.lead{font-size:1.18em;max-width:40em}
+ul.points,ol.steps{margin:0;padding-left:1.3em;display:flex;flex-direction:column;gap:6px}
+ul.points li::marker{color:var(--accent)}
+ol.steps li::marker{color:var(--accent);font-family:var(--mono);font-weight:600}
+code{font-family:var(--mono);font-size:.9em;background:var(--codebg);padding:1px 5px;border-radius:3px}
+strong{color:var(--accent);font-weight:600}
+.formula{border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);padding:10px 4px;display:flex;flex-wrap:wrap;gap:6px 18px;align-items:baseline}
+.fexpr{font-family:var(--mono);font-size:1.12em;color:var(--teal);font-weight:600;overflow-wrap:anywhere}
+.fnote{color:var(--muted);font-size:.9em}
+.note{background:var(--tint);padding:10px 14px;border-radius:4px;display:flex;gap:12px;align-items:baseline}
+.note .tag{font-size:.75em;letter-spacing:.08em;color:var(--teal);font-weight:700;white-space:nowrap}
+.note.warn{background:var(--warntint)}
+.note.warn .tag{color:var(--warn)}
+pre.code{background:var(--codebg);padding:12px 14px;border-radius:4px;overflow-x:auto;margin:0;font-size:.82em;line-height:1.5}
+pre.code code{background:none;padding:0}
+.tablewrap{overflow-x:auto}
+table.t{border-collapse:collapse;font-size:.9em;font-variant-numeric:tabular-nums;min-width:60%}
+table.t th{text-align:left;font-weight:600;border-bottom:1.5px solid var(--ink);padding:5px 12px 5px 0}
+table.t td{border-bottom:1px solid var(--rule);padding:5px 12px 5px 0;vertical-align:top}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.cols>div{min-width:0;display:flex;flex-direction:column;gap:10px}
+figure.plate{margin:0;background:#fdfaf5;border:1px solid var(--rule);border-radius:4px;padding:8px;max-width:min(100%,760px);align-self:flex-start}
+figure.plate img{display:block;width:100%;height:auto}
+figure.plate figcaption{color:#76685a;font-size:.8em;padding-top:4px}
+.qa{border-left:2px solid var(--teal);padding-left:12px;display:flex;flex-direction:column;gap:4px}
+.qa .q{font-weight:600}
+.qa .a{color:var(--muted)}
+.foot{display:flex;justify-content:space-between;font-size:.75em;color:var(--muted)}
+.title-slide h1{font-size:2.6em}
+.title-slide .kicker{color:var(--accent);font-size:.95em;letter-spacing:.06em}
+.ctrl{display:flex;gap:8px;align-items:center}
+.navbtn{display:none;min-width:34px}
+.pos{display:none;font-size:12px;color:var(--muted);min-width:44px;text-align:center}
+/* presentation mode: one slide at a time, scaled to the viewport */
+body.present .deck{height:calc(100% - 48px);justify-content:center;padding:8px 16px 16px}
+body.present .slide{display:none;width:var(--sw);max-width:none;aspect-ratio:16/9;font-size:calc(var(--sw) / 52);overflow:auto}
+body.present .slide.on{display:flex}
+body.present figure.plate img{max-height:calc(var(--sw) * 0.21);width:auto;max-width:100%}
+body.present .formula{padding:6px 4px}
+body.present .navbtn,body.present .pos{display:inline-block}
+@media (max-width:760px){.cols{grid-template-columns:1fr}.slide{padding:22px 18px 18px 30px}.slide::before{left:16px}h1{font-size:1.7em}.title-slide h1{font-size:2em}}
+@media (prefers-reduced-motion:reduce){.bar i{transition:none}}
+@media print{body{background:none}.top,.bar{display:none}.deck{padding:0;gap:0}.slide{display:flex!important;page-break-after:always;border:none;aspect-ratio:auto;width:100%!important;font-size:14px!important}}
+
+a{color:var(--teal)}
+.page{max-width:980px;margin:0 auto;padding-block:28px 64px;display:flex;flex-direction:column;gap:28px}
+body.doc{padding-inline:16px}
+.hero{display:flex;flex-direction:column;gap:10px;padding-top:8px}
+.hero h1{font-size:clamp(1.9rem,4vw,2.7rem)}
+.hero .kicker{color:var(--accent);font-size:.9rem;letter-spacing:.06em}
+.hero p{max-width:44em;color:var(--ink)}
+.howto{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.howto div{border-top:2px solid var(--ink);padding-top:8px;min-width:0}
+.howto b{font-family:var(--mono);color:var(--accent)}
+.week h2{font-size:1.35rem}
+.week .wsub{color:var(--muted);margin:2px 0 10px}
+.days{list-style:none;margin:0;padding:0;border-top:1px solid var(--rule)}
+.days li{display:grid;grid-template-columns:3.2rem minmax(0,1fr) auto;gap:12px;align-items:center;padding:10px 0;border-bottom:1px solid var(--rule)}
+.days .n{font-family:var(--mono);color:var(--muted);font-size:.9rem}
+.days .t{min-width:0}
+.days .t a{color:var(--ink);text-decoration:none;font-weight:600}
+.days .t a:hover{color:var(--accent)}
+.days .chip{display:inline-block;font-size:.72rem;color:var(--teal);border:1px solid var(--rule);border-radius:3px;padding:0 6px;margin-left:8px;white-space:nowrap}
+.days .links{display:flex;gap:10px;font-size:.85rem;flex-wrap:wrap;justify-content:flex-end}
+.days .links a{color:var(--muted)}
+.days .links span{color:var(--muted)}
+.days input{width:18px;height:18px;accent-color:var(--accent)}
+.days li.done .t a{color:var(--muted);text-decoration:line-through}
+.box{background:var(--tint);padding:16px 18px;border-radius:4px;display:flex;flex-direction:column;gap:8px}
+.box h2{font-size:1.2rem}
+.prog{font-family:var(--mono);color:var(--muted);font-size:.9rem}
+.md h1{font-size:2rem;margin-top:8px}.md h2{font-size:1.35rem;margin-top:22px}.md h3{font-size:1.1rem;font-family:var(--body);margin-top:14px}
+.md p,.md li{max-width:46em}.md table{border-collapse:collapse;font-size:.92rem}.md th,.md td{border-bottom:1px solid var(--rule);padding:5px 12px 5px 0;text-align:left;vertical-align:top}
+.md pre{background:var(--codebg);padding:12px;border-radius:4px;overflow-x:auto}.md{display:flex;flex-direction:column;gap:10px}
+.md ul,.md ol{display:flex;flex-direction:column;gap:4px}
+@media (max-width:760px){.howto{grid-template-columns:1fr}.days li{grid-template-columns:2.6rem minmax(0,1fr)}.days .links{grid-column:2;justify-content:flex-start}}
+</style></head><body class="doc">
+<main class="page">
+<header class="hero"><p class="kicker">28 天 · 每天幻灯片 + notebook + 论文精读</p><h1>心理大模型评测与 Agent</h1>
+<p>面向心理学背景的研究者：用心理测量和实验设计的方法评测心理健康大模型，并动手搭建一个有评测的 CBT 支持 Agent。所有例子都来自心理健康场景，所有数据都是课程编写或模拟的。</p>
+<p class="prog" id="prog"></p></header>
+<section class="howto" aria-label="怎么学">
+<div><b>1</b> 看当天的幻灯片，点“逐页放映”可以全屏翻页。</div>
+<div><b>2</b> 在 Jupyter 里运行当天的 notebook，完成练习，看自动批改结果。</div>
+<div><b>3</b> 读当天的论文，录音回答口述题，把作业推到你的仓库。</div></section>
+<section class="week"><h2>第 1 周</h2><p class="wsub">测量基础：信度、一致性、区间、功效、IRT</p><ul class="days"><li><span class="n">D01</span><span class="t"><a href="lessons/day01_reliability_validity/slides.html">信度与效度：先检验测量工具</a><span class="chip">评测方法学</span></span>
+<span class="links"><a href="lessons/day01_reliability_validity/slides.html">幻灯片</a><a href="lessons/day01_reliability_validity/notebook.ipynb">notebook</a><a href="lessons/day01_reliability_validity/README.md">学习单</a><input type="checkbox" id="done-1" aria-label="第 1 天已完成"></span></li><li><span class="n">D02</span><span class="t"><a href="lessons/day02_agreement/slides.html">一致性指标：kappa、alpha 与 ICC</a><span class="chip">评测方法学</span></span>
+<span class="links"><a href="lessons/day02_agreement/slides.html">幻灯片</a><a href="lessons/day02_agreement/notebook.ipynb">notebook</a><a href="lessons/day02_agreement/README.md">学习单</a><input type="checkbox" id="done-2" aria-label="第 2 天已完成"></span></li><li><span class="n">D03</span><span class="t"><a href="lessons/day03_intervals/slides.html">区间估计：一个分数没有区间就不是结论</a><span class="chip">评测方法学</span></span>
+<span class="links"><a href="lessons/day03_intervals/slides.html">幻灯片</a><a href="lessons/day03_intervals/notebook.ipynb">notebook</a><a href="lessons/day03_intervals/README.md">学习单</a><input type="checkbox" id="done-3" aria-label="第 3 天已完成"></span></li><li><span class="n">D04</span><span class="t"><a href="lessons/day04_compare_models/slides.html">比较两个模型：配对、McNemar 与多重比较</a><span class="chip">评测方法学</span></span>
+<span class="links"><a href="lessons/day04_compare_models/slides.html">幻灯片</a><a href="lessons/day04_compare_models/notebook.ipynb">notebook</a><a href="lessons/day04_compare_models/README.md">学习单</a><input type="checkbox" id="done-4" aria-label="第 4 天已完成"></span></li><li><span class="n">D05</span><span class="t"><a href="lessons/day05_power/slides.html">题量与统计功效：需要多少道题</a><span class="chip">评测方法学</span></span>
+<span class="links"><a href="lessons/day05_power/slides.html">幻灯片</a><a href="lessons/day05_power/notebook.ipynb">notebook</a><a href="lessons/day05_power/README.md">学习单</a><input type="checkbox" id="done-5" aria-label="第 5 天已完成"></span></li><li><span class="n">D06</span><span class="t"><a href="lessons/day06_irt_1/slides.html">项目反应理论（一）：题目并不等价</a><span class="chip">评测方法学</span></span>
+<span class="links"><a href="lessons/day06_irt_1/slides.html">幻灯片</a><a href="lessons/day06_irt_1/notebook.ipynb">notebook</a><a href="lessons/day06_irt_1/README.md">学习单</a><input type="checkbox" id="done-6" aria-label="第 6 天已完成"></span></li><li><span class="n">D07</span><span class="t"><a href="lessons/day07_problem_set_1/slides.html">习题集 1：测量基础</a><span class="chip">复习与习题</span></span>
+<span class="links"><a href="lessons/day07_problem_set_1/slides.html">幻灯片</a><a href="lessons/day07_problem_set_1/notebook.ipynb">notebook</a><a href="lessons/day07_problem_set_1/README.md">学习单</a><input type="checkbox" id="done-7" aria-label="第 7 天已完成"></span></li></ul></section><section class="week"><h2>第 2 周</h2><p class="wsub">题目、裁判与评分者：IRT 应用、偏好聚合、裁判偏差、污染</p><ul class="days"><li><span class="n">D08</span><span class="t"><a href="lessons/day08_irt_2/slides.html">项目反应理论（二）：压缩评测集与自适应测验</a><span class="chip">评测方法学</span></span>
+<span class="links"><a href="lessons/day08_irt_2/slides.html">幻灯片</a><a href="lessons/day08_irt_2/notebook.ipynb">notebook</a><a href="lessons/day08_irt_2/README.md">学习单</a><input type="checkbox" id="done-8" aria-label="第 8 天已完成"></span></li><li><span class="n">D09</span><span class="t"><a href="lessons/day09_preference_aggregation/slides.html">偏好聚合：Bradley-Terry、Elo 与排名区间</a><span class="chip">评测方法学</span></span>
+<span class="links"><a href="lessons/day09_preference_aggregation/slides.html">幻灯片</a><a href="lessons/day09_preference_aggregation/notebook.ipynb">notebook</a><a href="lessons/day09_preference_aggregation/README.md">学习单</a><input type="checkbox" id="done-9" aria-label="第 9 天已完成"></span></li><li><span class="n">D10</span><span class="t"><a href="lessons/day10_judge_bias/slides.html">LLM 裁判的偏差：位置、长度、自我偏好与附和</a><span class="chip">评测方法学</span></span>
+<span class="links"><a href="lessons/day10_judge_bias/slides.html">幻灯片</a><a href="lessons/day10_judge_bias/notebook.ipynb">notebook</a><a href="lessons/day10_judge_bias/README.md">学习单</a><input type="checkbox" id="done-10" aria-label="第 10 天已完成"></span></li><li><span class="n">D11</span><span class="t"><a href="lessons/day11_judge_protocol/slides.html">裁判验证协议：从检验到上线门槛</a><span class="chip">评测方法学</span></span>
+<span class="links"><a href="lessons/day11_judge_protocol/slides.html">幻灯片</a><a href="lessons/day11_judge_protocol/notebook.ipynb">notebook</a><a href="lessons/day11_judge_protocol/README.md">学习单</a><input type="checkbox" id="done-11" aria-label="第 11 天已完成"></span></li><li><span class="n">D12</span><span class="t"><a href="lessons/day12_rater_models/slides.html">评分者建模：Dawid-Skene 与分歧的来源</a><span class="chip">评测方法学</span></span>
+<span class="links"><a href="lessons/day12_rater_models/slides.html">幻灯片</a><a href="lessons/day12_rater_models/notebook.ipynb">notebook</a><a href="lessons/day12_rater_models/README.md">学习单</a><input type="checkbox" id="done-12" aria-label="第 12 天已完成"></span></li><li><span class="n">D13</span><span class="t"><a href="lessons/day13_contamination/slides.html">数据污染：评测题是否已经被模型见过</a><span class="chip">评测方法学</span></span>
+<span class="links"><a href="lessons/day13_contamination/slides.html">幻灯片</a><a href="lessons/day13_contamination/notebook.ipynb">notebook</a><a href="lessons/day13_contamination/README.md">学习单</a><input type="checkbox" id="done-13" aria-label="第 13 天已完成"></span></li><li><span class="n">D14</span><span class="t"><a href="lessons/day14_problem_set_2/slides.html">习题集 2 与模拟面试（一）</a><span class="chip">复习与习题</span></span>
+<span class="links"><a href="lessons/day14_problem_set_2/slides.html">幻灯片</a><a href="lessons/day14_problem_set_2/notebook.ipynb">notebook</a><a href="lessons/day14_problem_set_2/README.md">学习单</a><input type="checkbox" id="done-14" aria-label="第 14 天已完成"></span></li></ul></section><section class="week"><h2>第 3 周</h2><p class="wsub">大模型、Agent 与项目实战</p><ul class="days"><li><span class="n">D15</span><span class="t"><a href="lessons/day15_llm_basics/slides.html">大模型基础：采样、对齐训练与奖励过优化</a><span class="chip">Agent 与模型</span></span>
+<span class="links"><a href="lessons/day15_llm_basics/slides.html">幻灯片</a><a href="lessons/day15_llm_basics/notebook.ipynb">notebook</a><a href="lessons/day15_llm_basics/README.md">学习单</a><input type="checkbox" id="done-15" aria-label="第 15 天已完成"></span></li><li><span class="n">D16</span><span class="t"><a href="lessons/day16_agent_basics/slides.html">Agent 基础：工具调用与 ReAct 循环</a><span class="chip">Agent 与模型</span></span>
+<span class="links"><a href="lessons/day16_agent_basics/slides.html">幻灯片</a><a href="lessons/day16_agent_basics/notebook.ipynb">notebook</a><a href="lessons/day16_agent_basics/README.md">学习单</a><input type="checkbox" id="done-16" aria-label="第 16 天已完成"></span></li><li><span class="n">D17</span><span class="t"><a href="lessons/day17_memory_user_model/slides.html">记忆与用户建模：状态、特质与隐私</a><span class="chip">Agent 与模型</span></span>
+<span class="links"><a href="lessons/day17_memory_user_model/slides.html">幻灯片</a><a href="lessons/day17_memory_user_model/notebook.ipynb">notebook</a><a href="lessons/day17_memory_user_model/README.md">学习单</a><input type="checkbox" id="done-17" aria-label="第 17 天已完成"></span></li><li><span class="n">D18</span><span class="t"><a href="lessons/day18_agent_evaluation/slides.html">Agent 评测：pass@k、pass^k 与轨迹检查</a><span class="chip">Agent 与模型</span></span>
+<span class="links"><a href="lessons/day18_agent_evaluation/slides.html">幻灯片</a><a href="lessons/day18_agent_evaluation/notebook.ipynb">notebook</a><a href="lessons/day18_agent_evaluation/README.md">学习单</a><input type="checkbox" id="done-18" aria-label="第 18 天已完成"></span></li><li><span class="n">D19</span><span class="t"><a href="lessons/day19_project_pipeline/slides.html">项目实战（一）：生成回复、裁判评分与评分包</a><span class="chip">项目实战</span></span>
+<span class="links"><a href="lessons/day19_project_pipeline/slides.html">幻灯片</a><a href="lessons/day19_project_pipeline/notebook.ipynb">notebook</a><a href="lessons/day19_project_pipeline/README.md">学习单</a><input type="checkbox" id="done-19" aria-label="第 19 天已完成"></span></li><li><span class="n">D20</span><span class="t"><a href="lessons/day20_project_analysis/slides.html">项目实战（二）：按计划分析并写结果</a><span class="chip">项目实战</span></span>
+<span class="links"><a href="lessons/day20_project_analysis/slides.html">幻灯片</a><a href="lessons/day20_project_analysis/notebook.ipynb">notebook</a><a href="lessons/day20_project_analysis/README.md">学习单</a><input type="checkbox" id="done-20" aria-label="第 20 天已完成"></span></li><li><span class="n">D21</span><span class="t"><a href="lessons/day21_problem_set_3/slides.html">习题集 3 与模拟面试（二）：项目深挖</a><span class="chip">复习与习题</span></span>
+<span class="links"><a href="lessons/day21_problem_set_3/slides.html">幻灯片</a><a href="lessons/day21_problem_set_3/notebook.ipynb">notebook</a><a href="lessons/day21_problem_set_3/README.md">学习单</a><input type="checkbox" id="done-21" aria-label="第 21 天已完成"></span></li></ul></section><section class="week"><h2>第 4 周</h2><p class="wsub">研究级评测与求职准备</p><ul class="days"><li><span class="n">D22</span><span class="t"><a href="lessons/day22_causal_inference/slides.html">因果推断：聊天机器人使用能减轻老年人的孤独吗</a><span class="chip">评测方法学</span></span>
+<span class="links"><a href="lessons/day22_causal_inference/slides.html">幻灯片</a><a href="lessons/day22_causal_inference/notebook.ipynb">notebook</a><a href="lessons/day22_causal_inference/README.md">学习单</a><input type="checkbox" id="done-22" aria-label="第 22 天已完成"></span></li><li><span class="n">D23</span><span class="t"><a href="lessons/day23_validity_audit/slides.html">评测集审计：入库检查、饱和与退役</a><span class="chip">评测方法学</span></span>
+<span class="links"><a href="lessons/day23_validity_audit/slides.html">幻灯片</a><a href="lessons/day23_validity_audit/notebook.ipynb">notebook</a><a href="lessons/day23_validity_audit/README.md">学习单</a><input type="checkbox" id="done-23" aria-label="第 23 天已完成"></span></li><li><span class="n">D24</span><span class="t"><a href="lessons/day24_reproducibility/slides.html">可复现性与版本治理：托管模型会悄悄改变</a><span class="chip">评测方法学</span></span>
+<span class="links"><a href="lessons/day24_reproducibility/slides.html">幻灯片</a><a href="lessons/day24_reproducibility/notebook.ipynb">notebook</a><a href="lessons/day24_reproducibility/README.md">学习单</a><input type="checkbox" id="done-24" aria-label="第 24 天已完成"></span></li><li><span class="n">D25</span><span class="t"><a href="lessons/day25_project_wrapup/slides.html">项目收尾：仓库、README 与局限</a><span class="chip">项目实战</span></span>
+<span class="links"><a href="lessons/day25_project_wrapup/slides.html">幻灯片</a><a href="lessons/day25_project_wrapup/notebook.ipynb">notebook</a><a href="lessons/day25_project_wrapup/README.md">学习单</a><input type="checkbox" id="done-25" aria-label="第 25 天已完成"></span></li><li><span class="n">D26</span><span class="t"><a href="lessons/day26_resume_pitch/slides.html">简历与项目讲述：把研究翻译成岗位语言</a><span class="chip">求职准备</span></span>
+<span class="links"><a href="lessons/day26_resume_pitch/slides.html">幻灯片</a><a href="lessons/day26_resume_pitch/notebook.ipynb">notebook</a><a href="lessons/day26_resume_pitch/README.md">学习单</a><input type="checkbox" id="done-26" aria-label="第 26 天已完成"></span></li><li><span class="n">D27</span><span class="t"><a href="lessons/day27_mock_interview/slides.html">全真模拟面试</a><span class="chip">求职准备</span></span>
+<span class="links"><a href="lessons/day27_mock_interview/slides.html">幻灯片</a><a href="lessons/day27_mock_interview/notebook.ipynb">notebook</a><a href="lessons/day27_mock_interview/README.md">学习单</a><input type="checkbox" id="done-27" aria-label="第 27 天已完成"></span></li><li><span class="n">D28</span><span class="t"><a href="lessons/day28_final_review/slides.html">查漏补缺与提交</a><span class="chip">复习与习题</span></span>
+<span class="links"><a href="lessons/day28_final_review/slides.html">幻灯片</a><a href="lessons/day28_final_review/notebook.ipynb">notebook</a><a href="lessons/day28_final_review/README.md">学习单</a><input type="checkbox" id="done-28" aria-label="第 28 天已完成"></span></li></ul></section>
+<section class="box"><h2>期末作业</h2><p>一项可以延伸成你自己研究的小型研究：检验 LLM 裁判评价 CBT 取向回复的效度，并评测一个你自己搭建的支持 Agent。第 28 天提交。</p><p><a href="coursework.html">期末作业说明</a></p></section>
+</main><script>
+(function(){
+  const boxes=[...document.querySelectorAll('.days input')];
+  let state={}; try{state=JSON.parse(localStorage.getItem('course-done')||'{}')}catch(e){}
+  function paint(){
+    let n=0; boxes.forEach(b=>{const on=!!state[b.id]; b.checked=on; b.closest('li').classList.toggle('done',on); if(on)n++;});
+    document.getElementById('prog').textContent='已完成 '+n+' / '+boxes.length+' 天';
+  }
+  boxes.forEach(b=>b.addEventListener('change',()=>{state[b.id]=b.checked; try{localStorage.setItem('course-done',JSON.stringify(state))}catch(e){} paint();}));
+  paint();
+})();
+</script></body></html>
